@@ -1,6 +1,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using SolidTest.Data;
+using SolidTest.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<BaseContext>(options =>
-    options.UseMysql(
-        builder.configuration.GetConnectionString("MysqlConnection"),
-        Microsoft.EntityFrameworkCore.ServerVersion.parse("8.0.20-mysql")));
+builder.Services.AddDbContext<BaseContext> (options => 
+                            options.UseMySql(
+                                builder.Configuration.GetConnectionString("MySqlConnection"),
+                                Microsoft.EntityFrameworkCore.ServerVersion.Parse("8.0.20-mysql")));
+    
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 var app = builder.Build();
 
@@ -45,6 +48,7 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
